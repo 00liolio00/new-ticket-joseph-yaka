@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ouverture de Ticket</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0baea1;
+            color: white;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #e444a4;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Espace pour le logo -->
+        <div class="logo">
+            <img src="Logo.png" alt="Logo">
+        </div>
+        <form id="ticketForm">
+            <label for="objet">Objet du ticket</label>
+            <input type="text" id="objet" name="objet" required placeholder="Ex: Problème technique">
+
+            <label for="assigned-to">Assigné à</label>
+            <select id="assigned-to" name="assigned-to" multiple required>
+                <option value="3731">Manon</option>
+                <option value="4">Joseph</option>
+                <option value="1">Lionel</option>
+                <option value="7">Maxence</option>
+                <option value="6">Julien</option>
+            </select>
+
+            <label for="priorite">Priorité du ticket</label>
+            <select id="priorite" name="priorite" required>
+                <option value="3" selected>3 (Faible)</option>
+                <option value="2">2 (Moyenne)</option>
+                <option value="1">1 (Élevée)</option>
+            </select>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" required placeholder="Expliquez votre problème..."></textarea>
+
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        // Initialisation de Choices.js pour le champ select multiple
+        const assignedToSelect = new Choices('#assigned-to', {
+            removeItemButton: true, // Permet de supprimer un choix
+            placeholder: true,
+            placeholderValue: 'Sélectionner des assignés'
+        });
+
+        document.getElementById('ticketForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Récupérer les valeurs sélectionnées dans le sélecteur multiple
+            const assignedTo = Array.from(document.getElementById('assigned-to').selectedOptions)
+                .map(option => option.value);
+
+            const data = {
+                object: document.getElementById('objet').value, 
+                content: document.getElementById('description').value, 
+                assignedTo: assignedTo, 
+                priority: document.getElementById('priorite').value 
+            };
+
+            fetch('https://api.naomeconsulting.com/api:qE1RfpWC/new-ticket/joseph', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Ticket envoyé avec succès !');
+                    // Réinitialiser le formulaire après soumission réussie
+                    document.getElementById('ticketForm').reset();
+                })
+                .catch((error) => {
+                    alert('Erreur lors de l\'envoi du ticket.');
+                    console.error('Erreur:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>
